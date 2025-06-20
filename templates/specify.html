@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block title %}Spesifikasi Histogram{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Spesifikasi Histogram</h2>
+    <div class="card">
+        <div class="card-body">
+            <form action="/specify/" method="post" enctype="multipart/form-data">
+                <div class="mb-3">
+                    <label for="source" class="form-label">Pilih Gambar Sumber</label>
+                    <input type="file" class="form-control" id="source" name="file" accept="image/*" required>
+                </div>
+                <div class="mb-3">
+                    <label for="reference" class="form-label">Pilih Gambar Referensi</label>
+                    <input type="file" class="form-control" id="reference" name="ref_file" accept="image/*" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Mode Spesifikasi</label>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="mode" id="grayscale" value="grayscale" checked>
+                        <label class="form-check-label" for="grayscale">
+                            Grayscale
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="mode" id="color" value="color">
+                        <label class="form-check-label" for="color">
+                            Warna (RGB)
+                        </label>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary">Proses</button>
+            </form>
+        </div>
+    </div>
+
+    {% if error %}
+    <div class="alert alert-danger mt-3" role="alert">
+        {{ error }}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

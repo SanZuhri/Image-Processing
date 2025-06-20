@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+
+{% block title %}Pengolahan Citra Wajah{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4">Pengolahan Citra Wajah</h2>
+
+    <!-- Section 1: Menambahkan Noise -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="card-title mb-0">1. Penambahan Noise Salt and Pepper</h5>
+        </div>
+        <div class="card-body">
+            <form action="/face-processing/noise" method="post" enctype="multipart/form-data">
+                <div class="mb-3">
+                    <label for="noiseImage" class="form-label">Pilih Gambar Wajah</label>
+                    <input type="file" class="form-control" id="noiseImage" name="file" accept="image/*" required>
+                </div>
+                <div class="mb-3">
+                    <label for="noiseAmount" class="form-label">Jumlah Noise (0.0 - 0.1)</label>
+                    <input type="range" class="form-range" id="noiseAmount" name="amount" min="0" max="0.1" step="0.01" value="0.05">
+                    <div class="text-center" id="noiseValue">0.05</div>
+                </div>
+                <button type="submit" class="btn btn-primary">Tambah Noise</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Section 2: Menghilangkan Noise -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="card-title mb-0">2. Penghilangan Noise</h5>
+        </div>
+        <div class="card-body">
+            <form action="/face-processing/denoise" method="post" enctype="multipart/form-data">
+                <div class="mb-3">
+                    <label for="denoiseImage" class="form-label">Pilih Gambar dengan Noise</label>
+                    <input type="file" class="form-control" id="denoiseImage" name="file" accept="image/*" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Metode Penghilangan Noise</label>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="method" id="gaussian" value="gaussian" checked>
+                        <label class="form-check-label" for="gaussian">Gaussian Blur</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="method" id="median" value="median">
+                        <label class="form-check-label" for="median">Median Filter</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="method" id="bilateral" value="bilateral">
+                        <label class="form-check-label" for="bilateral">Bilateral Filter</label>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary">Hilangkan Noise</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Section 3: Penajaman Citra -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="card-title mb-0">3. Penajaman Citra</h5>
+        </div>
+        <div class="card-body">
+            <form action="/face-processing/sharpen" method="post" enctype="multipart/form-data">
+                <div class="mb-3">
+                    <label for="sharpenImage" class="form-label">Pilih Gambar</label>
+                    <input type="file" class="form-control" id="sharpenImage" name="file" accept="image/*" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Metode Penajaman</label>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="method" id="laplacian" value="laplacian" checked>
+                        <label class="form-check-label" for="laplacian">Laplacian</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="method" id="unsharp" value="unsharp">
+                        <label class="form-check-label" for="unsharp">Unsharp Masking</label>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary">Tajamkan Citra</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Results Section -->
+    {% if original_image_path and modified_image_path %}
+    <div class="card">
+        <div class="card-header">
+            <h5 class="card-title mb-0">Hasil Pengolahan</h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <h6>Gambar Asli</h6>
+                    <img src="{{ original_image_path }}" class="img-fluid" alt="Original Image">
+                </div>
+                <div class="col-md-6">
+                    <h6>Hasil Pengolahan</h6>
+                    <img src="{{ modified_image_path }}" class="img-fluid" alt="Processed Image">
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<script>
+    // Update noise amount display
+    const noiseSlider = document.getElementById('noiseAmount');
+    const noiseValue = document.getElementById('noiseValue');
+    
+    noiseSlider.addEventListener('input', function() {
+        noiseValue.textContent = this.value;
+    });
+</script>
+{% endblock %} 

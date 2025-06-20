@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="mb-4">Tambah Wajah Baru ke Dataset</h2>
+    
+    <form action="/face-detection/" method="post" enctype="multipart/form-data" class="mb-4" id="faceDetectionForm">
+        <div class="form-group">
+            <label for="new_person">Nama Orang Baru:</label>
+            <input type="text" class="form-control" id="new_person" name="new_person" required>
+        </div>
+        <button type="submit" class="btn btn-primary mt-3">Mulai Deteksi Wajah</button>
+    </form>
+
+    {% if message %}
+        <div class="alert alert-{{ message_type }}">
+            {{ message }}
+        </div>
+    {% endif %}
+
+    {% if video_feed %}
+        <div class="mt-4">
+            <h4>Live Video Feed</h4>
+            <img src="{{ url_for('video_feed', new_person=new_person) }}" width="640" height="480">
+        </div>
+        
+        <div class="progress mt-3">
+            <div class="progress-bar" role="progressbar" style="width: {{ progress }}%" 
+                 aria-valuenow="{{ progress }}" aria-valuemin="0" aria-valuemax="100">
+                {{ progress }}%
+            </div>
+        </div>
+        
+        <p class="mt-2">Status: <span id="status">{{ status }}</span></p>
+        
+        <div id="completionMessage" style="display: none;" class="alert alert-success mt-3">
+            Proses deteksi wajah selesai! <a href="/face-detection/" class="btn btn-primary btn-sm ms-2">Mulai Baru</a>
+        </div>
+    {% endif %}
+</div>
+
+{% if video_feed %}
+<script>
+function updateStatus() {
+    fetch('/face-detection/status')
+        .then(response => response.json())
+        .then(data => {
+            document.querySelector('.progress-bar').style.width = data.progress + '%';
+            document.querySelector('.progress-bar').setAttribute('aria-valuenow', data.progress);
+            document.querySelector('.progress-bar').textContent = Math.round(data.progress) + '%';
+            document.getElementById('status').textContent = data.status;
+            
+            if (data.num_images < 20) {
+                setTimeout(updateStatus, 1000);
+            } else {
+                fetch('/face-detection/stop', { method: 'POST' })
+                    .then(() => {
+                        document.getElementById('status').textContent = "Selesai mengambil gambar!";
+                        document.getElementById('completionMessage').style.display = 'block';
+                        document.getElementById('faceDetectionForm').style.display = 'none';
+                    });
+            }
+        });
+}
+
+// Start updating status when page loads
+updateStatus();
+</script>
+{% endif %}
+{% endblock %}

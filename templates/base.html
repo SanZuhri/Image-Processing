@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% block title %}JTK PCD 2024 - NAMA - NIM{% endblock %}</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <!-- Custom CSS -->
+    <style>
+      :root {
+        --primary-color: #2c3e50;
+        --secondary-color: #34495e;
+        --accent-color: #7f8c8d;
+        --light-color: #ecf0f1;
+        --dark-color: #2c3e50;
+        --text-color: #2c3e50;
+        --border-radius: 8px;
+        --sidebar-width: 220px;
+        --navbar-height: 72px;
+        --sidebar-collapsed-width: 0px;
+      }
+
+      body {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        color: var(--text-color);
+        background-color: #f8f9fa;
+        padding-top: var(--navbar-height);
+        min-height: 100vh;
+        overflow-x: hidden;
+      }
+
+      .navbar {
+        background-color: var(--primary-color) !important;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        padding: 1rem;
+        z-index: 1030;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: var(--navbar-height);
+      }
+
+      .navbar-brand {
+        font-weight: 600;
+        color: white !important;
+        font-size: 1.2rem;
+      }
+
+      .sidebar {
+        width: var(--sidebar-width);
+        background-color: white;
+        box-shadow: 2px 0 4px rgba(0,0,0,0.05);
+        padding: 1rem 0;
+        height: calc(100vh - var(--navbar-height));
+        position: fixed;
+        overflow-y: auto;
+        top: var(--navbar-height);
+        left: 0;
+        z-index: 1020;
+        transition: all 0.3s ease;
+      }
+
+      .sidebar.collapsed {
+        width: var(--sidebar-collapsed-width);
+        transform: translateX(-100%);
+      }
+
+      .sidebar-toggle {
+        position: fixed;
+        left: var(--sidebar-width);
+        top: calc(var(--navbar-height) + 1rem);
+        z-index: 1025;
+        background: var(--primary-color);
+        color: white;
+        border: none;
+        border-radius: 0 var(--border-radius) var(--border-radius) 0;
+        padding: 0.4rem;
+        width: 24px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 2px 0 4px rgba(0,0,0,0.1);
+      }
+
+      .sidebar-toggle:hover {
+        background: var(--secondary-color);
+      }
+
+      .sidebar-toggle.collapsed {
+        left: 0;
+      }
+
+      .sidebar-toggle i {
+        font-size: 1.2rem;
+        transition: transform 0.3s ease;
+      }
+
+      .sidebar-toggle.collapsed i {
+        transform: rotate(180deg);
+      }
+
+      .nav-category {
+        padding: 0.5rem 1rem;
+        font-size: 0.7rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        color: var(--accent-color);
+        letter-spacing: 0.5px;
+        margin-top: 0.75rem;
+      }
+
+      .nav-link {
+        color: var(--text-color);
+        padding: 0.5rem 1rem;
+        border-radius: 0;
+        transition: all 0.2s ease;
+        font-size: 0.85rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .nav-link i {
+        width: 16px;
+        text-align: center;
+        font-size: 0.9rem;
+        color: var(--accent-color);
+        flex-shrink: 0;
+      }
+
+      .nav-link:hover {
+        background-color: var(--light-color);
+        color: var(--primary-color);
+      }
+
+      .nav-link:hover i {
+        color: var(--primary-color);
+      }
+
+      .nav-link.active {
+        background-color: var(--light-color);
+        color: var(--primary-color);
+        font-weight: 500;
+        position: relative;
+      }
+
+      .nav-link.active::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 4px;
+        background-color: var(--primary-color);
+      }
+
+      .nav-link.active i {
+        color: var(--primary-color);
+      }
+
+      main {
+        margin-left: var(--sidebar-width);
+        background-color: white;
+        min-height: calc(100vh - var(--navbar-height));
+        padding: 2rem;
+        position: relative;
+        width: calc(100% - var(--sidebar-width));
+        transition: margin-left 0.3s ease, width 0.3s ease;
+      }
+
+      main.expanded {
+        margin-left: var(--sidebar-collapsed-width);
+        width: 100%;
+      }
+
+      .container-fluid {
+        padding-left: 0;
+        padding-right: 0;
+        overflow-x: hidden;
+      }
+
+      .row {
+        margin: 0;
+        position: relative;
+      }
+
+      .card {
+        border: none;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        border-radius: var(--border-radius);
+        transition: transform 0.2s ease;
+      }
+
+      .card:hover {
+        transform: translateY(-2px);
+      }
+
+      .card-header {
+        background-color: white;
+        border-bottom: 1px solid rgba(0,0,0,0.1);
+        padding: 1rem 1.5rem;
+      }
+
+      .btn-primary {
+        background-color: var(--primary-color);
+        border-color: var(--primary-color);
+      }
+
+      .btn-primary:hover {
+        background-color: var(--secondary-color);
+        border-color: var(--secondary-color);
+      }
+
+      /* Custom scrollbar */
+      ::-webkit-scrollbar {
+        width: 6px;
+      }
+
+      ::-webkit-scrollbar-track {
+        background: #f1f1f1;
+      }
+
+      ::-webkit-scrollbar-thumb {
+        background: var(--accent-color);
+        border-radius: 3px;
+      }
+
+      ::-webkit-scrollbar-thumb:hover {
+        background: var(--secondary-color);
+      }
+
+      @media (max-width: 768px) {
+        .sidebar {
+          transform: translateX(-100%);
+          width: 100%;
+          max-width: 280px;
+        }
+
+        .sidebar.show {
+          transform: translateX(0);
+        }
+
+        main {
+          margin-left: 0;
+          width: 100%;
+          padding: 1rem;
+        }
+
+        .sidebar-toggle {
+          display: none;
+        }
+
+        .nav-link {
+          padding: 0.75rem 1rem;
+          font-size: 1rem;
+        }
+
+        .nav-category {
+          padding: 0.75rem 1rem;
+          font-size: 0.8rem;
+        }
+      }
+
+      @media (min-width: 769px) and (max-width: 1024px) {
+        :root {
+          --sidebar-width: 200px;
+        }
+
+        .nav-link {
+          font-size: 0.8rem;
+          padding: 0.5rem 0.75rem;
+        }
+
+        .nav-category {
+          font-size: 0.65rem;
+          padding: 0.5rem 0.75rem;
+        }
+      }
+
+      @media (min-width: 1025px) {
+        main {
+          padding: 2rem 3rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-dark">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="/">
+          <i class="fas fa-image me-2"></i>
+          JTK PCD 2024 - IKHSAN ZUHRI - 231511015
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarMenu">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+      </div>
+    </nav>
+
+    <button class="sidebar-toggle" id="sidebarToggle">
+      <i class="fas fa-chevron-left"></i>
+    </button>
+
+    <div class="container-fluid">
+      <div class="row">
+        <!-- Sidebar -->
+        <nav class="col-md-3 col-lg-2 d-md-block sidebar" id="sidebarMenu">
+          <div class="position-sticky">
+            <div class="nav-category">Operasi Dasar</div>
+            <ul class="nav flex-column">
+              <li class="nav-item">
+                <a class="nav-link {% if request.path == '/' %}active{% endif %}" href="/">
+                  <i class="fas fa-home"></i>
+                  <span>Home</span>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link {% if request.path == '/compilation/' %}active{% endif %}" href="/compilation/">
+                  <i class="fas fa-layer-group"></i>
+                  <span>Kompilasi</span>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link {% if request.path == '/basic-operations/' %}active{% endif %}" href="/basic-operations/">
+                  <i class="fas fa-calculator"></i>
+                  <span>Operasi Dasar</span>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link {% if request.path == '/grayscale/' %}active{% endif %}" href="/grayscale/">
+                  <i class="fas fa-adjust"></i>
+                  <span>Grayscale</span>
+                </a>
+              </li>
+            </ul>
+
+            <div class="nav-category">Histogram</div>
+            <ul class="nav flex-column">
+              <li class="nav-item">
+                <a class="nav-link {% if request.path == '/histogram/' %}active{% endif %}" href="/histogram/">
+                  <i class="fas fa-chart-bar"></i>
+                  <span>Histogram</span>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link {% if request.path == '/equalize/' %}active{% endif %}" href="/equalize/">
+                  <i class="fas fa-equals"></i>
+                  <span>Ekualisasi</span>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link {% if request.path == '/specify/' %}active{% endif %}" href="/specify/">
+                  <i class="fas fa-sliders-h"></i>
+                  <span>Spesifikasi</span>
+                </a>
+              </li>
+            </ul>
+
+            <div class="nav-category">Filter & Konvolusi</div>
+            <ul class="nav flex-column">
+              <li class="nav-item">
+                <a class="nav-link {% if request.path == '/convolution/' %}active{% endif %}" href="/convolution/">
+                  <i class="fas fa-th"></i>
+                  <span>Konvolusi</span>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link {% if request.path == '/padding/' %}active{% endif %}" href="/padding/">
+                  <i class="fas fa-expand-arrows-alt"></i>
+                  <span>Zero Padding</span>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link {% if request.path == '/filter/' %}active{% endif %}" href="/filter/">
+                  <i class="fas fa-filter"></i>
+                  <span>Filter</span>
+                </a>
+              </li>
+            </ul>
+
+            <div class="nav-category">Analisis Lanjutan</div>
+            <ul class="nav flex-column">
+              <li class="nav-item">
+                <a class="nav-link {% if request.path == '/fourier/' %}active{% endif %}" href="/fourier/">
+                  <i class="fas fa-wave-square"></i>
+                  <span>Transformasi Fourier</span>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link {% if request.path == '/face-detection/' %}active{% endif %}" href="/face-detection/">
+                  <i class="fas fa-user"></i>
+                  <span>Deteksi Wajah</span>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link {% if request.path == '/face-processing/' %}active{% endif %}" href="/face-processing/">
+                  <i class="fas fa-user-edit"></i>
+                  <span>Pengolahan Wajah</span>
+                </a>
+              </li>
+            </ul>
+
+            <div class="nav-category">Tools Khusus</div>
+            <ul class="nav flex-column">
+              <li class="nav-item">
+                <a class="nav-link {% if request.path == '/reduce-noise/' %}active{% endif %}" href="/reduce-noise/">
+                  <i class="fas fa-broom"></i>
+                  <span>Pengurangan Noise</span>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link {% if request.path == '/image-analysis/' %}active{% endif %}" href="/image-analysis/">
+                  <i class="fas fa-chart-line"></i>
+                  <span>Analisis Citra</span>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link {% if request.path == '/compression/' %}active{% endif %}" href="/compression/">
+                  <i class="fas fa-compress"></i>
+                  <span>Kompresi Citra</span>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link {% if request.path == '/color-spaces/' %}active{% endif %}" href="/color-spaces/">
+                  <i class="fas fa-palette"></i>
+                  <span>Ruang Warna</span>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link {% if request.path == '/texture/' %}active{% endif %}" href="/texture/">
+                  <i class="fas fa-border-all"></i>
+                  <span>Analisis Tekstur</span>
+                </a>
+              </li>
+            </ul>
+          </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4" id="mainContent">
+          {% block content %}{% endblock %}
+        </main>
+      </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Sidebar Scripts -->
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        const sidebar = document.getElementById('sidebarMenu');
+        const mainContent = document.getElementById('mainContent');
+        const sidebarToggle = document.getElementById('sidebarToggle');
+        const mobileToggle = document.querySelector('.navbar-toggler');
+
+        // Desktop sidebar toggle
+        sidebarToggle.addEventListener('click', function() {
+          sidebar.classList.toggle('collapsed');
+          mainContent.classList.toggle('expanded');
+          sidebarToggle.classList.toggle('collapsed');
+        });
+
+        // Mobile sidebar toggle
+        mobileToggle.addEventListener('click', function() {
+          sidebar.classList.toggle('show');
+        });
+
+        // Save sidebar state in localStorage
+        function saveSidebarState() {
+          localStorage.setItem('sidebarCollapsed', sidebar.classList.contains('collapsed'));
+        }
+
+        // Load sidebar state from localStorage
+        function loadSidebarState() {
+          const isCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
+          if (isCollapsed) {
+            sidebar.classList.add('collapsed');
+            mainContent.classList.add('expanded');
+            sidebarToggle.classList.add('collapsed');
+          }
+        }
+
+        sidebarToggle.addEventListener('click', saveSidebarState);
+        loadSidebarState();
+      });
+    </script>
+  </body>
+</html>

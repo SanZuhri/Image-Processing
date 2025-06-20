@@ -1,0 +1,220 @@
+{% extends "base.html" %}
+
+{% block title %}Analisis Citra{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Analisis Citra</h2>
+
+    <!-- Tab Navigation -->
+    <ul class="nav nav-tabs mb-4" id="analysisTab" role="tablist">
+        <li class="nav-item">
+            <a class="nav-link active" id="freeman-tab" data-bs-toggle="tab" href="#freeman" role="tab">Freeman Chain Code</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="crack-tab" data-bs-toggle="tab" href="#crack" role="tab">Crack Code (Canny)</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="projection-tab" data-bs-toggle="tab" href="#projection" role="tab">Proyeksi Integral</a>
+        </li>
+    </ul>
+
+    <!-- Tab Content -->
+    <div class="tab-content" id="analysisTabContent">
+        <!-- Freeman Chain Code Tab -->
+        <div class="tab-pane fade show active" id="freeman" role="tabpanel">
+            <div class="card">
+                <div class="card-body">
+                    <form action="/image-analysis/freeman/" method="post" enctype="multipart/form-data">
+                        <div class="mb-3">
+                            <label for="freemanImage" class="form-label">Pilih Gambar</label>
+                            <input type="file" class="form-control" id="freemanImage" name="file" accept="image/*" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="threshold" class="form-label">Threshold: <span id="thresholdValue">127</span></label>
+                            <input type="range" class="form-range" id="threshold" name="threshold" min="0" max="255" value="127">
+                        </div>
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="invert" name="invert">
+                            <label class="form-check-label" for="invert">Invert Binary (objek putih)</label>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Proses</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Crack Code Tab -->
+        <div class="tab-pane fade" id="crack" role="tabpanel">
+            <div class="card">
+                <div class="card-body">
+                    <form action="/image-analysis/crack/" method="post" enctype="multipart/form-data">
+                        <div class="mb-3">
+                            <label for="crackImage" class="form-label">Pilih Gambar</label>
+                            <input type="file" class="form-control" id="crackImage" name="file" accept="image/*" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="lowThreshold" class="form-label">Threshold Low: <span id="lowThresholdValue">50</span></label>
+                            <input type="range" class="form-range" id="lowThreshold" name="low_threshold" min="0" max="255" value="50">
+                        </div>
+                        <div class="mb-3">
+                            <label for="highThreshold" class="form-label">Threshold High: <span id="highThresholdValue">150</span></label>
+                            <input type="range" class="form-range" id="highThreshold" name="high_threshold" min="0" max="255" value="150">
+                        </div>
+                        <div class="mb-3">
+                            <label for="kernelSize" class="form-label">Kernel Size: <span id="kernelValue">5</span></label>
+                            <input type="range" class="form-range" id="kernelSize" name="kernel_size" min="3" max="31" step="2" value="5">
+                        </div>
+                        <button type="submit" class="btn btn-primary">Proses</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Projection Tab -->
+        <div class="tab-pane fade" id="projection" role="tabpanel">
+            <div class="card">
+                <div class="card-body">
+                    <form action="/image-analysis/projection/" method="post" enctype="multipart/form-data">
+                        <div class="mb-3">
+                            <label for="projectionImage" class="form-label">Pilih Gambar</label>
+                            <input type="file" class="form-control" id="projectionImage" name="file" accept="image/*" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="projThreshold" class="form-label">Threshold: <span id="projThresholdValue">127</span></label>
+                            <input type="range" class="form-range" id="projThreshold" name="threshold" min="0" max="255" value="127">
+                        </div>
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="projInvert" name="invert">
+                            <label class="form-check-label" for="projInvert">Invert Binary (objek putih)</label>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Proses</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% if error %}
+    <div class="alert alert-danger mt-4" role="alert">
+        {{ error }}
+    </div>
+    {% endif %}
+
+    <!-- Results Section -->
+    {% if mode == "freeman" %}
+    <div class="row mt-4">
+        <div class="col-md-4">
+            <h4>Gambar Asli</h4>
+            <img src="{{ original_image_path }}" class="img-fluid" alt="Original Image">
+        </div>
+        <div class="col-md-4">
+            <h4>Gambar Biner</h4>
+            <img src="{{ binary_image_path }}" class="img-fluid" alt="Binary Image">
+        </div>
+        <div class="col-md-4">
+            <h4>Kontur</h4>
+            <img src="{{ contour_image_path }}" class="img-fluid" alt="Contour Image">
+        </div>
+    </div>
+    <div class="mt-4">
+        <h4>Chain Code</h4>
+        <pre class="bg-light p-3">{{ chain_code }}</pre>
+        <h4>Analisis</h4>
+        <ul class="list-group">
+            <li class="list-group-item">Luas Kontur: {{ analysis.area }} px²</li>
+            <li class="list-group-item">Keliling Kontur: {{ analysis.perimeter }} px</li>
+            <li class="list-group-item">Panjang Chain Code: {{ analysis.chain_code_length }}</li>
+            <li class="list-group-item">Rasio Chain Code/Keliling: {{ analysis.ratio }}</li>
+        </ul>
+    </div>
+    {% endif %}
+
+    {% if mode == "crack" %}
+    <div class="row mt-4">
+        <div class="col-md-4">
+            <h4>Gambar Asli</h4>
+            <img src="{{ original_image_path }}" class="img-fluid" alt="Original Image">
+        </div>
+        <div class="col-md-4">
+            <h4>Gambar Blur</h4>
+            <img src="{{ blur_image_path }}" class="img-fluid" alt="Blurred Image">
+        </div>
+        <div class="col-md-4">
+            <h4>Tepi (Canny)</h4>
+            <img src="{{ edges_image_path }}" class="img-fluid" alt="Edges Image">
+        </div>
+    </div>
+    <div class="mt-4">
+        <h4>Analisis</h4>
+        <ul class="list-group">
+            <li class="list-group-item">Jumlah Piksel Tepi: {{ analysis.edge_pixels }}</li>
+            <li class="list-group-item">Total Piksel: {{ analysis.total_pixels }}</li>
+            <li class="list-group-item">Persentase Tepi: {{ analysis.edge_percentage }}%</li>
+        </ul>
+    </div>
+    {% endif %}
+
+    {% if mode == "projection" %}
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <h4>Gambar Asli</h4>
+            <img src="{{ original_image_path }}" class="img-fluid" alt="Original Image">
+        </div>
+        <div class="col-md-6">
+            <h4>Gambar Biner</h4>
+            <img src="{{ binary_image_path }}" class="img-fluid" alt="Binary Image">
+        </div>
+    </div>
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <h4>Proyeksi Horizontal</h4>
+            <img src="{{ horiz_proj_path }}" class="img-fluid" alt="Horizontal Projection">
+        </div>
+        <div class="col-md-6">
+            <h4>Proyeksi Vertikal</h4>
+            <img src="{{ vert_proj_path }}" class="img-fluid" alt="Vertical Projection">
+        </div>
+    </div>
+    <div class="mt-4">
+        <h4>Analisis</h4>
+        <ul class="list-group">
+            <li class="list-group-item">Lebar Citra: {{ analysis.width }} px</li>
+            <li class="list-group-item">Tinggi Citra: {{ analysis.height }} px</li>
+            <li class="list-group-item">Max Proyeksi Horizontal: {{ analysis.max_horiz }} pada kolom {{ analysis.max_horiz_idx }}</li>
+            <li class="list-group-item">Max Proyeksi Vertikal: {{ analysis.max_vert }} pada baris {{ analysis.max_vert_idx }}</li>
+        </ul>
+    </div>
+    {% endif %}
+</div>
+
+<script>
+    // Update nilai slider
+    const sliders = {
+        'threshold': 'thresholdValue',
+        'lowThreshold': 'lowThresholdValue',
+        'highThreshold': 'highThresholdValue',
+        'kernelSize': 'kernelValue',
+        'projThreshold': 'projThresholdValue'
+    };
+
+    Object.entries(sliders).forEach(([sliderId, outputId]) => {
+        const slider = document.getElementById(sliderId);
+        const output = document.getElementById(outputId);
+        if (slider && output) {
+            slider.addEventListener('input', function() {
+                output.textContent = this.value;
+            });
+        }
+    });
+
+    // Set active tab based on mode
+    {% if mode %}
+        const mode = "{{ mode }}";
+        const tab = document.querySelector(`#${mode}-tab`);
+        if (tab) {
+            tab.click();
+        }
+    {% endif %}
+</script>
+{% endblock %} 

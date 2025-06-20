@@ -1,0 +1,341 @@
+{% extends "base.html" %}
+{% block title %}Home{% endblock %}
+{% block content %}
+<div class="container mt-4">
+    <!-- Welcome Section -->
+    <div class="welcome-section p-5 mb-5 rounded">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h1 class="text-white mb-3">Selamat Datang di PCD Lab</h1>
+                <p class="text-light mb-0 lead">Platform pengolahan citra digital interaktif untuk pembelajaran dan eksperimen. Jelajahi berbagai tools dan teknik pengolahan citra modern.</p>
+            </div>
+            <div class="col-md-4 text-end">
+                <a href="/compilation/" class="btn btn-light btn-lg">
+                    <span class="d-block mb-1">Mulai Eksplorasi</span>
+                    <small class="text-muted">Akses Semua Fitur</small>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Feature Categories -->
+    <div class="row g-4">
+        <!-- Basic Operations Category -->
+        <div class="col-12 mb-4">
+            <div class="category-header d-flex align-items-center mb-3">
+                <div class="category-icon me-3">
+                    <i class="fas fa-cube fa-lg text-primary"></i>
+                </div>
+                <div>
+                    <h5 class="text-muted mb-0">Operasi Dasar</h5>
+                    <small class="text-muted">Fundamental Image Processing</small>
+                </div>
+                <div class="ms-auto">
+                    <div class="badge bg-light text-primary">Basic</div>
+                </div>
+            </div>
+            <div class="row g-3">
+                <div class="col-md-3">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center mb-3">
+                                <i class="fas fa-calculator me-2 text-primary"></i>
+                                <h5 class="card-title mb-0">Operasi Dasar</h5>
+                            </div>
+                            <p class="card-text text-muted">Operasi aritmatika dan logika pada citra digital.</p>
+                            <a href="/basic-operations/" class="btn btn-outline-primary w-100">Mulai</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center mb-3">
+                                <i class="fas fa-adjust me-2 text-primary"></i>
+                                <h5 class="card-title mb-0">Grayscale</h5>
+                            </div>
+                            <p class="card-text text-muted">Konversi gambar berwarna ke grayscale.</p>
+                            <a href="/grayscale/" class="btn btn-outline-primary w-100">Mulai</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center mb-3">
+                                <i class="fas fa-chart-bar me-2 text-primary"></i>
+                                <h5 class="card-title mb-0">Histogram</h5>
+                            </div>
+                            <p class="card-text text-muted">Visualisasi dan analisis histogram citra.</p>
+                            <a href="/histogram/" class="btn btn-outline-primary w-100">Mulai</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center mb-3">
+                                <i class="fas fa-equals me-2 text-primary"></i>
+                                <h5 class="card-title mb-0">Ekualisasi</h5>
+                            </div>
+                            <p class="card-text text-muted">Pemerataan histogram untuk peningkatan kontras.</p>
+                            <a href="/equalize/" class="btn btn-outline-primary w-100">Mulai</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Convolution & Filter Category -->
+        <div class="col-12 mb-4">
+            <div class="category-header d-flex align-items-center mb-3">
+                <div class="category-icon me-3">
+                    <i class="fas fa-wave-square fa-lg text-primary"></i>
+                </div>
+                <div>
+                    <h5 class="text-muted mb-0">Konvolusi & Filter</h5>
+                    <small class="text-muted">Image Enhancement & Processing</small>
+                </div>
+                <div class="ms-auto">
+                    <div class="badge bg-light text-primary">Intermediate</div>
+                </div>
+            </div>
+            <div class="row g-3">
+                <div class="col-md-3">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center mb-3">
+                                <i class="fas fa-th me-2 text-primary"></i>
+                                <h5 class="card-title mb-0">Konvolusi</h5>
+                            </div>
+                            <p class="card-text text-muted">Operasi konvolusi dengan berbagai kernel.</p>
+                            <a href="/convolution/" class="btn btn-outline-primary w-100">Mulai</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center mb-3">
+                                <i class="fas fa-expand-arrows-alt me-2 text-primary"></i>
+                                <h5 class="card-title mb-0">Padding</h5>
+                            </div>
+                            <p class="card-text text-muted">Penambahan padding pada citra digital.</p>
+                            <a href="/padding/" class="btn btn-outline-primary w-100">Mulai</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center mb-3">
+                                <i class="fas fa-filter me-2 text-primary"></i>
+                                <h5 class="card-title mb-0">Filter</h5>
+                            </div>
+                            <p class="card-text text-muted">Aplikasi berbagai filter untuk perbaikan citra.</p>
+                            <a href="/filter/" class="btn btn-outline-primary w-100">Mulai</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center mb-3">
+                                <i class="fas fa-broom me-2 text-primary"></i>
+                                <h5 class="card-title mb-0">Noise Reduction</h5>
+                            </div>
+                            <p class="card-text text-muted">Pengurangan noise dengan filter notch.</p>
+                            <a href="/reduce-noise/" class="btn btn-outline-primary w-100">Mulai</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Advanced Analysis Category -->
+        <div class="col-12 mb-4">
+            <div class="category-header d-flex align-items-center mb-3">
+                <div class="category-icon me-3">
+                    <i class="fas fa-microscope fa-lg text-primary"></i>
+                </div>
+                <div>
+                    <h5 class="text-muted mb-0">Analisis Lanjutan</h5>
+                    <small class="text-muted">Advanced Image Analysis</small>
+                </div>
+                <div class="ms-auto">
+                    <div class="badge bg-light text-primary">Advanced</div>
+                </div>
+            </div>
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center mb-3">
+                                <i class="fas fa-wave-square me-2 text-primary"></i>
+                                <h5 class="card-title mb-0">Transformasi Fourier</h5>
+                            </div>
+                            <p class="card-text text-muted">Analisis frekuensi dan transformasi domain.</p>
+                            <a href="/fourier/" class="btn btn-outline-primary w-100">Mulai</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center mb-3">
+                                <i class="fas fa-palette me-2 text-primary"></i>
+                                <h5 class="card-title mb-0">Ruang Warna</h5>
+                            </div>
+                            <p class="card-text text-muted">Analisis dan konversi ruang warna (RGB, HSV, Lab, YCbCr).</p>
+                            <a href="/color-spaces/" class="btn btn-outline-primary w-100">Mulai</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center mb-3">
+                                <i class="fas fa-border-all me-2 text-primary"></i>
+                                <h5 class="card-title mb-0">Analisis Tekstur</h5>
+                            </div>
+                            <p class="card-text text-muted">Analisis tekstur dengan metode statistik dan spektral.</p>
+                            <a href="/texture/" class="btn btn-outline-primary w-100">Mulai</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Special Features Category -->
+        <div class="col-12 mb-4">
+            <div class="category-header d-flex align-items-center mb-3">
+                <div class="category-icon me-3">
+                    <i class="fas fa-star fa-lg text-primary"></i>
+                </div>
+                <div>
+                    <h5 class="text-muted mb-0">Fitur Khusus</h5>
+                    <small class="text-muted">Specialized Tools</small>
+                </div>
+                <div class="ms-auto">
+                    <div class="badge bg-light text-primary">Special</div>
+                </div>
+            </div>
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center mb-3">
+                                <i class="fas fa-user me-2 text-primary"></i>
+                                <h5 class="card-title mb-0">Deteksi & Olah Wajah</h5>
+                            </div>
+                            <p class="card-text text-muted">Deteksi dan pengolahan wajah menggunakan webcam.</p>
+                            <div class="mt-3">
+                                <a href="/face-detection/" class="btn btn-outline-primary w-100 mb-2">Deteksi Wajah</a>
+                                <a href="/face-processing/" class="btn btn-outline-secondary w-100">Pengolahan Wajah</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center mb-3">
+                                <i class="fas fa-compress me-2 text-primary"></i>
+                                <h5 class="card-title mb-0">Kompresi Citra</h5>
+                            </div>
+                            <p class="card-text text-muted">Kompresi JPEG (lossy) dan PNG (lossless) dengan analisis kualitas.</p>
+                            <a href="/compression/" class="btn btn-outline-primary w-100">Mulai</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center mb-3">
+                                <i class="fas fa-chart-line me-2 text-primary"></i>
+                                <h5 class="card-title mb-0">Analisis Citra</h5>
+                            </div>
+                            <p class="card-text text-muted">Chain Code, Crack Code, dan Proyeksi Integral.</p>
+                            <a href="/image-analysis/" class="btn btn-outline-primary w-100">Mulai</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Font Awesome for icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+<!-- Additional Styles -->
+<style>
+.welcome-section {
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    background-size: cover;
+    background-position: center;
+    transition: all 0.3s ease;
+}
+
+.welcome-section:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.category-header {
+    padding: 1rem;
+    background-color: white;
+    border-radius: var(--border-radius);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.category-icon {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--light-color);
+    border-radius: 50%;
+}
+
+.card {
+    transition: all 0.3s ease;
+    border: none;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.badge {
+    font-weight: 500;
+    padding: 0.5em 1em;
+}
+
+.btn-outline-primary {
+    border-width: 2px;
+}
+
+.btn-outline-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.btn-outline-secondary {
+    border-width: 2px;
+}
+
+.btn-outline-secondary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.lead {
+    font-size: 1.1rem;
+    font-weight: 300;
+}
+</style>
+{% endblock %}

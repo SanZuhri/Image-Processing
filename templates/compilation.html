@@ -1,0 +1,960 @@
+{% extends "base.html" %}
+
+{% block title %}Kompilasi Pengolahan Citra{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <!-- Tab Navigation -->
+    <ul class="nav nav-tabs mb-4" id="processingTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="single-input-tab" data-bs-toggle="tab" data-bs-target="#single-input" type="button" role="tab">
+                <i class="fas fa-image me-2"></i>Pemrosesan 1 Input
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="two-input-tab" data-bs-toggle="tab" data-bs-target="#two-input" type="button" role="tab">
+                <i class="fas fa-images me-2"></i>Pemrosesan 2 Input
+            </button>
+        </li>
+    </ul>
+
+    <!-- Tab Content -->
+    <div class="tab-content" id="processingTabContent">
+        <!-- Single Input Processing -->
+        <div class="tab-pane fade show active" id="single-input" role="tabpanel">
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">Pemrosesan 1 Input</h4>
+        </div>
+        <div class="card-body">
+                    <form action="/compilation/single/" method="post" enctype="multipart/form-data" id="singleInputForm">
+                <!-- Preview dan Input Gambar -->
+                <div class="row mb-4">
+                    <div class="col-md-8">
+                        <div class="image-preview-container border rounded p-3 text-center mb-3">
+                                    <img id="imagePreview1" src="#" alt="Preview" style="max-height: 300px; max-width: 100%; display: none;">
+                                    <div id="uploadPrompt1" class="py-5">
+                                <i class="fas fa-cloud-upload-alt fa-3x mb-3"></i>
+                                <p class="mb-0">Drag & drop gambar atau klik untuk memilih</p>
+                            </div>
+                        </div>
+                                <input type="file" class="form-control" id="image1" name="file" accept="image/*" required>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="image-info p-3 border rounded">
+                            <h6 class="border-bottom pb-2 mb-3">Informasi Gambar</h6>
+                                    <div id="imageInfo1">
+                                        <p class="mb-2"><strong>Nama:</strong> <span id="imageName1">-</span></p>
+                                        <p class="mb-2"><strong>Ukuran:</strong> <span id="imageSize1">-</span></p>
+                                        <p class="mb-2"><strong>Dimensi:</strong> <span id="imageDimensions1">-</span></p>
+                                        <p class="mb-0"><strong>Tipe:</strong> <span id="imageType1">-</span></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Hidden input for operations -->
+                        <input type="hidden" name="operations" id="selectedOperations1">
+
+                <!-- Pilihan Operasi -->
+                <div class="card mb-4">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">Pilih Operasi</h5>
+                        <div>
+                                    <button type="button" class="btn btn-sm btn-outline-primary me-2" id="selectAll1">Pilih Semua</button>
+                                    <button type="button" class="btn btn-sm btn-outline-secondary" id="deselectAll1">Hapus Semua</button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <!-- Operasi Dasar -->
+                                    <div class="col-md-6">
+                                <div class="operation-group">
+                                    <h6 class="mb-3 border-bottom pb-2">Operasi Dasar</h6>
+                                    <div class="form-check mb-2">
+                                                <input class="form-check-input operation-checkbox" type="checkbox" id="grayscale1" value="grayscale">
+                                                <label class="form-check-label" for="grayscale1">
+                                            <i class="fas fa-adjust me-1"></i> Grayscale
+                                        </label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                                <input class="form-check-input operation-checkbox" type="checkbox" id="histogram1" value="histogram">
+                                                <label class="form-check-label" for="histogram1">
+                                            <i class="fas fa-chart-bar me-1"></i> Histogram
+                                        </label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                                <input class="form-check-input operation-checkbox" type="checkbox" id="equalize1" value="equalize">
+                                                <label class="form-check-label" for="equalize1">
+                                            <i class="fas fa-equals me-1"></i> Equalisasi Histogram
+                                        </label>
+                                        <select class="form-select form-select-sm mt-1 operation-param" id="equalize_mode" name="equalize_mode" title="Pilih mode equalisasi: Grayscale atau per channel Warna.">
+                                            <option value="grayscale">Grayscale</option>
+                                            <option value="color">Warna</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                                <input class="form-check-input operation-checkbox" type="checkbox" id="padding1" value="padding">
+                                                <label class="form-check-label" for="padding1">
+                                            <i class="fas fa-border-style me-1"></i> Padding
+                                        </label>
+                                        <input type="number" class="form-control form-control-sm mt-1 operation-param" id="padding_value" name="padding_value" placeholder="Ukuran padding (pixel)" title="Ukuran padding di setiap sisi gambar (1-200 pixel)." min="1" max="200" value="20">
+                                    </div>
+                                    <div class="form-check mb-2">
+                                                <input class="form-check-input operation-checkbox" type="checkbox" id="filter1" value="filter">
+                                                <label class="form-check-label" for="filter1">
+                                            <i class="fas fa-filter me-1"></i> Filter
+                                        </label>
+                                        <select class="form-select form-select-sm mt-1 operation-param" id="filter_type" name="filter_type" title="Pilih jenis filter yang akan digunakan.">
+                                            <option value="gaussian">Gaussian</option>
+                                            <option value="median">Median</option>
+                                            <option value="bilateral">Bilateral</option>
+                                        </select>
+                                        <input type="number" class="form-control form-control-sm mt-1 operation-param" id="filter_kernel" name="filter_kernel" placeholder="Ukuran kernel (ganjil)" title="Ukuran kernel (harus ganjil, 3-31)." min="3" max="31" step="2" value="5">
+                                    </div>
+                                    <div class="form-check mb-2">
+                                                <input class="form-check-input operation-checkbox" type="checkbox" id="fourier1" value="fourier">
+                                                <label class="form-check-label" for="fourier1">
+                                            <i class="fas fa-wave-square me-1"></i> Fourier Transform
+                                        </label>
+                                        <select class="form-select form-select-sm mt-1 operation-param" id="fourier_type" name="fourier_type" title="Pilih komponen spektrum yang akan ditampilkan.">
+                                            <option value="magnitude">Magnitude</option>
+                                            <option value="phase">Phase</option>
+                                            <option value="both">Magnitude & Phase</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                                <input class="form-check-input operation-checkbox" type="checkbox" id="sharpen1" value="sharpen">
+                                                <label class="form-check-label" for="sharpen1">
+                                            <i class="fas fa-bolt me-1"></i> Penajaman
+                                        </label>
+                                        <select class="form-select form-select-sm mt-1 operation-param" id="sharpen_method" name="sharpen_method" title="Pilih metode penajaman citra.">
+                                            <option value="laplacian">Laplacian</option>
+                                            <option value="unsharp">Unsharp Masking</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                                <input class="form-check-input operation-checkbox" type="checkbox" id="denoise1" value="denoise">
+                                                <label class="form-check-label" for="denoise1">
+                                            <i class="fas fa-eraser me-1"></i> Penghilangan Noise
+                                        </label>
+                                        <select class="form-select form-select-sm mt-1 operation-param" id="denoise_method" name="denoise_method" title="Pilih metode penghilangan noise.">
+                                            <option value="gaussian">Gaussian</option>
+                                            <option value="median">Median</option>
+                                            <option value="bilateral">Bilateral</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                                <input class="form-check-input operation-checkbox" type="checkbox" id="add_noise1" value="add_noise">
+                                                <label class="form-check-label" for="add_noise1">
+                                            <i class="fas fa-bug me-1"></i> Tambah Noise Salt & Pepper
+                                        </label>
+                                        <input type="number" class="form-control form-control-sm mt-1 operation-param" id="add_noise_value" name="add_noise_value" placeholder="Jumlah noise (0-0.1)" title="Jumlah noise (0-0.1)." min="0" max="0.1" step="0.01" value="0.05">
+                                    </div>
+                                    <div class="form-check mb-2">
+                                                <input class="form-check-input operation-checkbox" type="checkbox" id="reduce_periodic1" value="reduce_periodic">
+                                                <label class="form-check-label" for="reduce_periodic1">
+                                            <i class="fas fa-minus-circle me-1"></i> Pengurangan Noise Periodik
+                                        </label>
+                                        <input type="number" class="form-control form-control-sm mt-1 operation-param" id="reduce_periodic_d0" name="reduce_periodic_d0" placeholder="Cutoff Frequency (D0)" title="Frekuensi cutoff untuk filter." min="1" max="100" value="10">
+                                        <input type="number" class="form-control form-control-sm mt-1 operation-param" id="reduce_periodic_n" name="reduce_periodic_n" placeholder="Orde Filter (n)" title="Orde dari filter Butterworth." min="1" max="10" value="4">
+                                        <input type="number" class="form-control form-control-sm mt-1 operation-param" id="reduce_periodic_uk" name="reduce_periodic_uk" placeholder="Pusat Notch u (uk)" title="Koordinat u dari pusat filter notch." min="1" max="500" value="50">
+                                        <input type="number" class="form-control form-control-sm mt-1 operation-param" id="reduce_periodic_vk" name="reduce_periodic_vk" placeholder="Pusat Notch v (vk)" title="Koordinat v dari pusat filter notch." min="1" max="500" value="50">
+                                    </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Operasi Aritmatika -->
+                                    <div class="col-md-6">
+                                        <div class="operation-group">
+                                            <h6 class="mb-3 border-bottom pb-2">Operasi Aritmatika</h6>
+                                            <div class="form-check mb-2">
+                                                <input class="form-check-input operation-checkbox" type="checkbox" id="add1" value="add">
+                                                <label class="form-check-label" for="add1">
+                                                    <i class="fas fa-plus me-1"></i> Penambahan
+                                                </label>
+                                                <input type="number" class="form-control form-control-sm mt-1 operation-param" 
+                                                    id="add_value" name="add_value" placeholder="Nilai (0-255)" 
+                                                    min="0" max="255" value="50">
+                                </div>
+                                            <div class="form-check mb-2">
+                                                <input class="form-check-input operation-checkbox" type="checkbox" id="subtract1" value="subtract">
+                                                <label class="form-check-label" for="subtract1">
+                                                    <i class="fas fa-minus me-1"></i> Pengurangan
+                                                </label>
+                                                <input type="number" class="form-control form-control-sm mt-1 operation-param" 
+                                                    id="subtract_value" name="subtract_value" placeholder="Nilai (0-255)" 
+                                                    min="0" max="255" value="50">
+                            </div>
+                                    <div class="form-check mb-2">
+                                                <input class="form-check-input operation-checkbox" type="checkbox" id="multiply1" value="multiply">
+                                                <label class="form-check-label" for="multiply1">
+                                                    <i class="fas fa-times me-1"></i> Perkalian
+                                        </label>
+                                                <input type="number" class="form-control form-control-sm mt-1 operation-param" 
+                                                    id="multiply_value" name="multiply_value" placeholder="Nilai (0.1-5.0)" 
+                                                    min="0.1" max="5.0" step="0.1" value="1.5">
+                                    </div>
+                                    <div class="form-check mb-2">
+                                                <input class="form-check-input operation-checkbox" type="checkbox" id="divide1" value="divide">
+                                                <label class="form-check-label" for="divide1">
+                                                    <i class="fas fa-divide me-1"></i> Pembagian
+                                        </label>
+                                                <input type="number" class="form-control form-control-sm mt-1 operation-param" 
+                                                    id="divide_value" name="divide_value" placeholder="Nilai (0.1-5.0)" 
+                                                    min="0.1" max="5.0" step="0.1" value="1.5">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Operasi Logika -->
+                                    <div class="col-md-6">
+                                        <div class="operation-group">
+                                            <h6 class="mb-3 border-bottom pb-2">Operasi Logika</h6>
+                                            <div class="form-check mb-2">
+                                                <input class="form-check-input operation-checkbox" type="checkbox" id="not1" value="not">
+                                                <label class="form-check-label" for="not1">
+                                                    <i class="fas fa-not-equal me-1"></i> Operasi NOT
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- Analisis Citra -->
+                                    <div class="col-md-6">
+                                        <div class="operation-group">
+                                            <h6 class="mb-3 border-bottom pb-2">Analisis Citra</h6>
+                                            <div class="form-check mb-2">
+                                                <input class="form-check-input operation-checkbox" type="checkbox" id="freeman1" value="freeman">
+                                                <label class="form-check-label" for="freeman1">Freeman Chain Code</label>
+                                                <input type="number" class="form-control form-control-sm mt-1 operation-param" id="freeman_threshold" placeholder="Threshold (0-255)" title="Ambang batas untuk konversi biner." value="127">
+                                                <div class="form-check form-check-inline mt-1">
+                                                    <input class="form-check-input operation-param" type="checkbox" id="freeman_invert" title="Inversi warna citra biner.">
+                                                    <label class="form-check-label" for="freeman_invert">Invert</label>
+                                                </div>
+                                            </div>
+                                            <div class="form-check mb-2">
+                                                <input class="form-check-input operation-checkbox" type="checkbox" id="crack_code1" value="crack_code">
+                                                <label class="form-check-label" for="crack_code1">Deteksi Tepi (Crack Code)</label>
+                                                <input type="number" class="form-control form-control-sm mt-1 operation-param" id="crack_low_thresh" placeholder="Low Threshold" title="Ambang batas bawah untuk deteksi tepi Canny." value="50">
+                                                <input type="number" class="form-control form-control-sm mt-1 operation-param" id="crack_high_thresh" placeholder="High Threshold" title="Ambang batas atas untuk deteksi tepi Canny." value="150">
+                                                <input type="number" class="form-control form-control-sm mt-1 operation-param" id="crack_kernel" placeholder="Kernel Size" title="Ukuran kernel untuk Gaussian blur." value="5">
+                                            </div>
+                                            <div class="form-check mb-2">
+                                                <input class="form-check-input operation-checkbox" type="checkbox" id="projection1" value="projection">
+                                                <label class="form-check-label" for="projection1">Analisis Proyeksi</label>
+                                                <input type="number" class="form-control form-control-sm mt-1 operation-param" id="projection_threshold" placeholder="Threshold (0-255)" title="Ambang batas untuk konversi biner." value="127">
+                                                <div class="form-check form-check-inline mt-1">
+                                                    <input class="form-check-input operation-param" type="checkbox" id="projection_invert" title="Inversi warna citra biner.">
+                                                    <label class="form-check-label" for="projection_invert">Invert</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- Kompresi Citra -->
+                                    <div class="col-md-6">
+                                        <div class="operation-group">
+                                            <h6 class="mb-3 border-bottom pb-2">Kompresi Citra</h6>
+                                            <div class="form-check mb-2">
+                                                <input class="form-check-input operation-checkbox" type="checkbox" id="compression1" value="compression">
+                                                <label class="form-check-label" for="compression1">Kompresi Citra</label>
+                                                <select class="form-select form-select-sm mt-1 operation-param" id="compression_method" name="compression_method" title="Pilih metode kompresi.">
+                                                    <option value="jpeg">JPEG</option>
+                                                    <option value="png">PNG</option>
+                                                </select>
+                                                <div id="jpeg_options">
+                                                    <input type="number" class="form-control form-control-sm mt-1 operation-param" id="jpeg_quality" name="jpeg_quality" placeholder="Kualitas JPEG (1-100)" title="Kualitas kompresi JPEG (1-100)." min="1" max="100" value="95">
+                                                </div>
+                                                <div id="png_options" style="display:none;">
+                                                    <input type="number" class="form-control form-control-sm mt-1 operation-param" id="png_level" name="png_level" placeholder="Level Kompresi PNG (0-9)" title="Level kompresi PNG (0-9)." min="0" max="9" value="9">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- Ruang Warna -->
+                                    <div class="col-md-6">
+                                        <div class="operation-group">
+                                            <h6 class="mb-3 border-bottom pb-2">Analisis Ruang Warna</h6>
+                                            <div class="form-check mb-2">
+                                                <input class="form-check-input operation-checkbox" type="checkbox" id="convert_space1" value="convert_space">
+                                                <label class="form-check-label" for="convert_space1">Konversi Ruang Warna</label>
+                                                <select class="form-select form-select-sm mt-1 operation-param" id="convert_space_target" title="Pilih target ruang warna untuk konversi.">
+                                                    <option value="xyz">XYZ</option>
+                                                    <option value="lab">LAB</option>
+                                                    <option value="ycrcb">YCrCb</option>
+                                                    <option value="hsv">HSV</option>
+                                                    <option value="hsl">HSL</option>
+                                                    <option value="luv">LUV</option>
+                                                    <option value="yuv">YUV</option>
+                                                </select>
+                                            </div>
+                                            <div class="form-check mb-2">
+                                                <input class="form-check-input operation-checkbox" type="checkbox" id="analyze_channels1" value="analyze_channels">
+                                                <label class="form-check-label" for="analyze_channels1">Analisis Kanal</label>
+                                                <select class="form-select form-select-sm mt-1 operation-param" id="analyze_channels_space" title="Pilih ruang warna untuk dianalisis kanalnya.">
+                                                    <option value="rgb">RGB</option>
+                                                    <option value="lab">LAB</option>
+                                                    <option value="hsv">HSV</option>
+                                                    <option value="ycrcb">YCrCb</option>
+                                                </select>
+                                            </div>
+                                            <div class="form-check mb-2">
+                                                <input class="form-check-input operation-checkbox" type="checkbox" id="analyze_luminance1" value="analyze_luminance">
+                                                <label class="form-check-label" for="analyze_luminance1">Analisis Luminance</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- Analisis Tekstur -->
+                                    <div class="col-md-6">
+                                        <div class="operation-group">
+                                            <h6 class="mb-3 border-bottom pb-2">Analisis Tekstur</h6>
+                                            <!-- First-Order -->
+                                            <div class="form-check mb-2">
+                                                <input class="form-check-input operation-checkbox" type="checkbox" id="texture_first_order" value="texture_first_order">
+                                                <label class="form-check-label" for="texture_first_order">Statistik First-Order</label>
+                                            </div>
+                                            <!-- GLCM -->
+                                            <div class="form-check mb-2">
+                                                <input class="form-check-input operation-checkbox" type="checkbox" id="texture_glcm" value="texture_glcm">
+                                                <label class="form-check-label" for="texture_glcm">GLCM</label>
+                                                <select class="form-select form-select-sm mt-1 operation-param" id="texture_glcm_direction" title="Arah analisis GLCM.">
+                                                    <option value="0">0°</option>
+                                                    <option value="1">45°</option>
+                                                    <option value="2">90°</option>
+                                                    <option value="3">135°</option>
+                                                </select>
+                                            </div>
+                                            <!-- Gabor -->
+                                            <div class="form-check mb-2">
+                                                <input class="form-check-input operation-checkbox" type="checkbox" id="texture_gabor" value="texture_gabor">
+                                                <label class="form-check-label" for="texture_gabor">Filter Gabor</label>
+                                                <input type="number" class="form-control form-control-sm mt-1 operation-param" id="gabor_orientation" placeholder="Orientasi (°)" title="Orientasi filter Gabor dalam derajat." value="0">
+                                                <input type="number" class="form-control form-control-sm mt-1 operation-param" id="gabor_frequency" placeholder="Frekuensi" title="Frekuensi spasial filter Gabor." value="0.5" step="0.1">
+                                            </div>
+                                            <!-- LBP -->
+                                            <div class="form-check mb-2">
+                                                <input class="form-check-input operation-checkbox" type="checkbox" id="texture_lbp" value="texture_lbp">
+                                                <label class="form-check-label" for="texture_lbp">Local Binary Patterns (LBP)</label>
+                                            </div>
+                                            <!-- GLRLM -->
+                                            <div class="form-check mb-2">
+                                                <input class="form-check-input operation-checkbox" type="checkbox" id="texture_glrlm" value="texture_glrlm">
+                                                <label class="form-check-label" for="texture_glrlm">GLRLM</label>
+                                                <select class="form-select form-select-sm mt-1 operation-param" id="texture_glrlm_direction" title="Arah analisis GLRLM.">
+                                                    <option value="0">Horizontal (0°)</option>
+                                                    <option value="90">Vertikal (90°)</option>
+                                                </select>
+                                            </div>
+                                            <!-- Texton -->
+                                            <div class="form-check mb-2">
+                                                <input class="form-check-input operation-checkbox" type="checkbox" id="texture_texton" value="texture_texton">
+                                                <label class="form-check-label" for="texture_texton">Analisis Texton</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Tombol Submit -->
+                        <div class="text-center">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-play me-2"></i>Proses Gambar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Two Input Processing -->
+        <div class="tab-pane fade" id="two-input" role="tabpanel">
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">Pemrosesan 2 Input</h4>
+                </div>
+                <div class="card-body">
+                    <form action="/compilation/double/" method="post" enctype="multipart/form-data" id="twoInputForm">
+                        <!-- Preview dan Input Gambar -->
+                        <div class="row mb-4">
+                            <!-- Input Gambar 1 -->
+                            <div class="col-md-6">
+                                <h5 class="mb-3">Gambar Pertama</h5>
+                                <div class="image-preview-container border rounded p-3 text-center mb-3">
+                                    <img id="imagePreview2a" src="#" alt="Preview" style="max-height: 200px; max-width: 100%; display: none;">
+                                    <div id="uploadPrompt2a" class="py-4">
+                                        <i class="fas fa-cloud-upload-alt fa-2x mb-2"></i>
+                                        <p class="mb-0">Drag & drop gambar atau klik untuk memilih</p>
+                                    </div>
+                                </div>
+                                <input type="file" class="form-control" id="image2a" name="file1" accept="image/*" required>
+                                <div class="image-info p-2 border rounded mt-2">
+                                    <div id="imageInfo2a">
+                                        <p class="mb-1"><small><strong>Nama:</strong> <span id="imageName2a">-</span></small></p>
+                                        <p class="mb-1"><small><strong>Dimensi:</strong> <span id="imageDimensions2a">-</span></small></p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Input Gambar 2 -->
+                            <div class="col-md-6">
+                                <h5 class="mb-3">Gambar Kedua</h5>
+                                <div class="image-preview-container border rounded p-3 text-center mb-3">
+                                    <img id="imagePreview2b" src="#" alt="Preview" style="max-height: 200px; max-width: 100%; display: none;">
+                                    <div id="uploadPrompt2b" class="py-4">
+                                        <i class="fas fa-cloud-upload-alt fa-2x mb-2"></i>
+                                        <p class="mb-0">Drag & drop gambar atau klik untuk memilih</p>
+                                    </div>
+                                </div>
+                                <input type="file" class="form-control" id="image2b" name="file2" accept="image/*" required>
+                                <div class="image-info p-2 border rounded mt-2">
+                                    <div id="imageInfo2b">
+                                        <p class="mb-1"><small><strong>Nama:</strong> <span id="imageName2b">-</span></small></p>
+                                        <p class="mb-1"><small><strong>Dimensi:</strong> <span id="imageDimensions2b">-</span></small></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Hidden input for operations -->
+                        <input type="hidden" name="operations" id="selectedOperations2">
+
+                        <!-- Pilihan Operasi -->
+                        <div class="card mb-4">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0">Pilih Operasi</h5>
+                                <div>
+                                    <button type="button" class="btn btn-sm btn-outline-primary me-2" id="selectAll2">Pilih Semua</button>
+                                    <button type="button" class="btn btn-sm btn-outline-secondary" id="deselectAll2">Hapus Semua</button>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <!-- Operasi Logika -->
+                                    <div class="col-md-6">
+                                        <div class="operation-group">
+                                            <h6 class="mb-3 border-bottom pb-2">Operasi Logika</h6>
+                                    <div class="form-check mb-2">
+                                                <input class="form-check-input operation-checkbox" type="checkbox" id="logic_and" value="logic_and">
+                                                <label class="form-check-label" for="logic_and">
+                                                    <i class="fas fa-code me-1"></i> Operasi AND
+                                        </label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                                <input class="form-check-input operation-checkbox" type="checkbox" id="logic_or" value="logic_or">
+                                                <label class="form-check-label" for="logic_or">
+                                                    <i class="fas fa-code me-1"></i> Operasi OR
+                                        </label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                                <input class="form-check-input operation-checkbox" type="checkbox" id="logic_xor" value="logic_xor">
+                                                <label class="form-check-label" for="logic_xor">
+                                                    <i class="fas fa-code me-1"></i> Operasi XOR
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                                    <!-- Operasi Histogram -->
+                                    <div class="col-md-6">
+                                <div class="operation-group">
+                                            <h6 class="mb-3 border-bottom pb-2">Operasi Histogram</h6>
+                                    <div class="form-check mb-2">
+                                                <input class="form-check-input operation-checkbox" type="checkbox" id="hist_spec_gray" value="hist_spec_gray">
+                                                <label class="form-check-label" for="hist_spec_gray">
+                                                    <i class="fas fa-chart-bar me-1"></i> Spesifikasi Histogram (Grayscale)
+                                        </label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                                <input class="form-check-input operation-checkbox" type="checkbox" id="hist_spec_color" value="hist_spec_color">
+                                                <label class="form-check-label" for="hist_spec_color">
+                                                    <i class="fas fa-chart-bar me-1"></i> Spesifikasi Histogram (Warna)
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tombol Submit -->
+                        <div class="text-center">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-play me-2"></i>Proses Gambar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+        </div>
+    </div>
+
+    <!-- Hasil Pemrosesan -->
+    {% if results %}
+    <div class="card mt-4">
+        <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
+            <h4 class="mb-0">Hasil Pemrosesan</h4>
+            <div>
+                <button class="btn btn-light btn-sm" onclick="window.print()">
+                    <i class="fas fa-print me-1"></i> Print Report
+                </button>
+                <button class="btn btn-light btn-sm ms-2" id="downloadAllBtn">
+                    <i class="fas fa-download me-1"></i> Download Semua
+                </button>
+            </div>
+        </div>
+        
+        <div class="card-body">
+            <!-- Informasi Citra Input -->
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <div class="card h-100">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">Citra Input</h5>
+                            <button class="btn btn-sm btn-outline-primary download-btn" data-url="{{ results.original_image }}">
+                                <i class="fas fa-download"></i>
+                            </button>
+                        </div>
+                        <div class="card-body">
+                            <div class="text-center mb-3">
+                                <img src="{{ results.original_image }}" class="img-fluid rounded" alt="Original Image" style="max-height: 300px;">
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <h6 class="border-bottom pb-2">Properti Dasar</h6>
+                                    <table class="table table-sm">
+                                        <tbody>
+                                            <tr><th>Dimensi</th><td>{{ results.image_info.width }} x {{ results.image_info.height }}</td></tr>
+                                            <tr><th>Format</th><td>{{ results.image_info.format }}</td></tr>
+                                            <tr><th>Mode</th><td>{{ results.image_info.mode }}</td></tr>
+                                            <tr><th>Channels</th><td>{{ results.image_info.channels }}</td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="col-md-6">
+                                    <h6 class="border-bottom pb-2">Statistik Dasar</h6>
+                                    <table class="table table-sm">
+                                        <tbody>
+                                            <tr><th>Min</th><td>{{ results.image_stats.min_value }}</td></tr>
+                                            <tr><th>Max</th><td>{{ results.image_stats.max_value }}</td></tr>
+                                            <tr><th>Mean</th><td>{{ "%.2f"|format(results.image_stats.mean) }}</td></tr>
+                                            <tr><th>Std Dev</th><td>{{ "%.2f"|format(results.image_stats.std) }}</td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {% if results.second_image %}
+                <div class="col-md-6">
+                    <div class="card h-100">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">Citra Input Kedua</h5>
+                            <button class="btn btn-sm btn-outline-primary download-btn" data-url="{{ results.second_image }}">
+                                <i class="fas fa-download"></i>
+                            </button>
+                        </div>
+                        <div class="card-body">
+                            <div class="text-center mb-3">
+                                <img src="{{ results.second_image }}" class="img-fluid rounded" alt="Second Image" style="max-height: 300px;">
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <h6 class="border-bottom pb-2">Properti Dasar</h6>
+                                    <table class="table table-sm">
+                                        <tbody>
+                                            <tr><th>Dimensi</th><td>{{ results.second_image_info.width }} x {{ results.second_image_info.height }}</td></tr>
+                                            <tr><th>Format</th><td>{{ results.second_image_info.format }}</td></tr>
+                                            <tr><th>Mode</th><td>{{ results.second_image_info.mode }}</td></tr>
+                                            <tr><th>Channels</th><td>{{ results.second_image_info.channels }}</td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="col-md-6">
+                                    <h6 class="border-bottom pb-2">Statistik Dasar</h6>
+                                    <table class="table table-sm">
+                                        <tbody>
+                                            <tr><th>Min</th><td>{{ results.second_image_stats.min_value }}</td></tr>
+                                            <tr><th>Max</th><td>{{ results.second_image_stats.max_value }}</td></tr>
+                                            <tr><th>Mean</th><td>{{ "%.2f"|format(results.second_image_stats.mean) }}</td></tr>
+                                            <tr><th>Std Dev</th><td>{{ "%.2f"|format(results.second_image_stats.std) }}</td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Hasil Operasi -->
+            <div class="row">
+                {% for operation in results.operations %}
+                <div class="col-md-6 mb-4">
+                    <div class="card h-100">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">{{ operation.name }}</h5>
+                            {% if operation.type in ["image", "plot"] %}
+                            <button class="btn btn-sm btn-outline-primary download-btn" data-url="{{ operation.data }}">
+                                <i class="fas fa-download"></i>
+                            </button>
+                            {% elif operation.type == "compression_analysis" %}
+                                <button class="btn btn-sm btn-outline-primary download-btn" data-url="{{ operation.data.compressed_image_path }}">
+                                    <i class="fas fa-download"></i>
+                                </button>
+                            {% elif operation.type == "luminance_analysis" %}
+                                <button class="btn btn-sm btn-outline-primary download-btn" data-url="{{ operation.data.image_path }}">
+                                    <i class="fas fa-download"></i>
+                                </button>
+                            {% elif operation.type == "texture_analysis" %}
+                                <button class="btn btn-sm btn-outline-primary download-btn" data-url="{{ operation.data.image_path }}">
+                                    <i class="fas fa-download"></i>
+                                </button>
+                            {% endif %}
+                        </div>
+                        <div class="card-body">
+                            {% if operation.type == "image" %}
+                                <div class="text-center">
+                                    <img src="{{ operation.data }}" class="img-fluid result-image rounded" alt="{{ operation.name }}" style="max-height: 300px;">
+                                </div>
+                            {% elif operation.type == "plot" %}
+                                <div class="text-center">
+                                    <img src="{{ operation.data }}" class="img-fluid result-plot rounded" alt="{{ operation.name }}">
+                                </div>
+                            {% elif operation.type == "compression_analysis" %}
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="text-center">
+                                            <img src="{{ operation.data.compressed_image_path }}" class="img-fluid result-image rounded" alt="{{ operation.name }}" style="max-height: 250px;">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <h6 class="border-bottom pb-2">Hasil Analisis Kompresi</h6>
+                                        <table class="table table-sm">
+                                            <tbody>
+                                                <tr><th>Ukuran Asli</th><td>{{ operation.data.original_size }}</td></tr>
+                                                <tr><th>Ukuran Terkompresi</th><td>{{ operation.data.compressed_size }}</td></tr>
+                                                <tr><th>Rasio Kompresi</th><td>{{ operation.data.compression_ratio }}</td></tr>
+                                                {% if operation.data.method == 'JPEG' %}
+                                                    <tr><th>PSNR</th><td>{{ operation.data.psnr }} dB</td></tr>
+                                                    <tr><th>MSE</th><td>{{ operation.data.mse }}</td></tr>
+                                                {% else %}
+                                                    <tr><th>Lossless</th><td>{{ 'Ya' if operation.data.is_identical else 'Tidak' }}</td></tr>
+                                                {% endif %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            {% elif operation.type == "luminance_analysis" %}
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="text-center">
+                                            <img src="{{ operation.data.image_path }}" class="img-fluid result-image rounded" alt="{{ operation.name }}" style="max-height: 250px;">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <h6 class="border-bottom pb-2">Hasil Analisis Luminance</h6>
+                                        <table class="table table-sm">
+                                            <tbody>
+                                                <tr><th>Mean</th><td>{{ operation.data.analysis.mean_luminance }}</td></tr>
+                                                <tr><th>Std Dev</th><td>{{ operation.data.analysis.std_luminance }}</td></tr>
+                                                <tr><th>Min</th><td>{{ operation.data.analysis.min_luminance }}</td></tr>
+                                                <tr><th>Max</th><td>{{ operation.data.analysis.max_luminance }}</td></tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            {% elif operation.type == "texture_analysis" %}
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        {% if operation.data.image_path %}
+                                            <div class="text-center">
+                                                <img src="{{ operation.data.image_path }}" class="img-fluid result-image rounded" alt="{{ operation.name }}" style="max-height: 250px;">
+                                            </div>
+                                        {% else %}
+                                            <div class="text-center p-5 border rounded bg-light">
+                                                <i class="fas fa-calculator fa-3x"></i>
+                                                <p class="mt-2 mb-0">Hanya Analisis Statistik</p>
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                    <div class="col-md-6">
+                                        <h6 class="border-bottom pb-2">Hasil Analisis Tekstur</h6>
+                                        <table class="table table-sm">
+                                            <tbody>
+                                                {% for key, value in operation.data.analysis.items() %}
+                                                    <tr><th>{{ key }}</th><td>{{ value }}</td></tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    {% if error %}
+    <div class="alert alert-danger mt-4" role="alert">
+        <i class="fas fa-exclamation-circle me-2"></i>
+        {{ error }}
+    </div>
+    {% endif %}
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Image preview functions
+    function setupImagePreview(inputId, previewId, promptId, nameId, sizeId, typeId, dimensionsId) {
+        document.getElementById(inputId).addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                    const preview = document.getElementById(previewId);
+                    preview.src = e.target.result;
+                    preview.style.display = 'block';
+                    document.getElementById(promptId).style.display = 'none';
+                    
+                    // Update image info
+                    document.getElementById(nameId).textContent = file.name;
+                    if (sizeId) {
+                        document.getElementById(sizeId).textContent = (file.size / 1024).toFixed(2) + ' KB';
+                    }
+                    if (typeId) {
+                        document.getElementById(typeId).textContent = file.type;
+                    }
+
+                // Get image dimensions
+                const img = new Image();
+                img.onload = function() {
+                        document.getElementById(dimensionsId).textContent = 
+                            this.width + ' x ' + this.height + ' px';
+                }
+                img.src = e.target.result;
+            }
+            reader.readAsDataURL(file);
+        }
+    });
+    }
+
+    // Setup image previews for both forms
+    setupImagePreview('image1', 'imagePreview1', 'uploadPrompt1', 'imageName1', 'imageSize1', 'imageType1', 'imageDimensions1');
+    setupImagePreview('image2a', 'imagePreview2a', 'uploadPrompt2a', 'imageName2a', null, null, 'imageDimensions2a');
+    setupImagePreview('image2b', 'imagePreview2b', 'uploadPrompt2b', 'imageName2b', null, null, 'imageDimensions2b');
+
+    // Select/Deselect all operations for single input
+    document.getElementById('selectAll1').addEventListener('click', function() {
+        document.querySelectorAll('#singleInputForm .operation-checkbox').forEach(checkbox => {
+            checkbox.checked = true;
+        });
+    });
+
+    document.getElementById('deselectAll1').addEventListener('click', function() {
+        document.querySelectorAll('#singleInputForm .operation-checkbox').forEach(checkbox => {
+            checkbox.checked = false;
+        });
+    });
+
+    // Select/Deselect all operations for two input
+    document.getElementById('selectAll2').addEventListener('click', function() {
+        document.querySelectorAll('#twoInputForm .operation-checkbox').forEach(checkbox => {
+            checkbox.checked = true;
+        });
+    });
+
+    document.getElementById('deselectAll2').addEventListener('click', function() {
+        document.querySelectorAll('#twoInputForm .operation-checkbox').forEach(checkbox => {
+            checkbox.checked = false;
+        });
+    });
+
+    // Form submission for single input
+    document.getElementById('singleInputForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        // Get selected operations and their parameters
+        const selectedOps = [];
+        document.querySelectorAll('#singleInputForm .operation-checkbox:checked').forEach(checkbox => {
+            const opValue = checkbox.value;
+            let paramString = '';
+            if (opValue === 'equalize') {
+                const mode = document.getElementById('equalize_mode').value;
+                paramString = mode;
+            } else if (opValue === 'padding') {
+                const pad = document.getElementById('padding_value').value;
+                paramString = pad;
+            } else if (opValue === 'filter') {
+                const ftype = document.getElementById('filter_type').value;
+                const fkernel = document.getElementById('filter_kernel').value;
+                paramString = `${ftype}|${fkernel}`;
+            } else if (opValue === 'fourier') {
+                const ftype = document.getElementById('fourier_type').value;
+                paramString = ftype;
+            } else if (opValue === 'sharpen') {
+                const smethod = document.getElementById('sharpen_method').value;
+                paramString = smethod;
+            } else if (opValue === 'denoise') {
+                const dmethod = document.getElementById('denoise_method').value;
+                paramString = dmethod;
+            } else if (opValue === 'add_noise') {
+                const nval = document.getElementById('add_noise_value').value;
+                paramString = nval;
+            } else if (opValue === 'reduce_periodic') {
+                const d0 = document.getElementById('reduce_periodic_d0').value;
+                const n = document.getElementById('reduce_periodic_n').value;
+                const uk = document.getElementById('reduce_periodic_uk').value;
+                const vk = document.getElementById('reduce_periodic_vk').value;
+                paramString = `${d0}|${n}|${uk}|${vk}`;
+            } else if (opValue === 'freeman') {
+                const thresh = document.getElementById('freeman_threshold').value;
+                const invert = document.getElementById('freeman_invert').checked;
+                paramString = `${thresh}|${invert}`;
+            } else if (opValue === 'crack_code') {
+                const low = document.getElementById('crack_low_thresh').value;
+                const high = document.getElementById('crack_high_thresh').value;
+                const kernel = document.getElementById('crack_kernel').value;
+                paramString = `${low}|${high}|${kernel}`;
+            } else if (opValue === 'projection') {
+                const thresh = document.getElementById('projection_threshold').value;
+                const invert = document.getElementById('projection_invert').checked;
+                paramString = `${thresh}|${invert}`;
+            } else if (opValue === 'compression') {
+                const method = document.getElementById('compression_method').value;
+                if (method === 'jpeg') {
+                    const quality = document.getElementById('jpeg_quality').value;
+                    paramString = `jpeg|${quality}`;
+                } else {
+                    const level = document.getElementById('png_level').value;
+                    paramString = `png|${level}`;
+                }
+            } else if (opValue === 'convert_space') {
+                paramString = document.getElementById('convert_space_target').value;
+            } else if (opValue === 'analyze_channels') {
+                paramString = document.getElementById('analyze_channels_space').value;
+            } else if (opValue === 'analyze_luminance') {
+                // No extra param needed, just the operation name
+                paramString = ''; // Set to empty or a placeholder if needed
+            } else if (opValue === 'texture_first_order') {
+                paramString = '';
+            } else if (opValue === 'texture_glcm') {
+                paramString = document.getElementById('texture_glcm_direction').value;
+            } else if (opValue === 'texture_gabor') {
+                const orientation = document.getElementById('gabor_orientation').value;
+                const frequency = document.getElementById('gabor_frequency').value;
+                paramString = `${orientation}|${frequency}`;
+            } else if (opValue === 'texture_lbp') {
+                paramString = '';
+            } else if (opValue === 'texture_glrlm') {
+                paramString = document.getElementById('texture_glrlm_direction').value;
+            } else if (opValue === 'texture_texton') {
+                paramString = '';
+            } else {
+                const paramInput = document.getElementById(`${opValue}_value`);
+                if (paramInput) {
+                    paramString = paramInput.value;
+                }
+            }
+            if (paramString) {
+                selectedOps.push(`${opValue}:${paramString}`);
+            } else {
+                selectedOps.push(opValue);
+            }
+        });
+        
+        if (selectedOps.length === 0) {
+            alert('Pilih minimal satu operasi');
+            return;
+        }
+        
+        // Set selected operations to hidden input
+        document.getElementById('selectedOperations1').value = selectedOps.join(',');
+        
+        // Submit form
+        this.submit();
+    });
+
+    // Show/hide compression options
+    document.getElementById('compression_method').addEventListener('change', function() {
+        if (this.value === 'jpeg') {
+            document.getElementById('jpeg_options').style.display = 'block';
+            document.getElementById('png_options').style.display = 'none';
+        } else {
+            document.getElementById('jpeg_options').style.display = 'none';
+            document.getElementById('png_options').style.display = 'block';
+        }
+    });
+
+    // Enable/disable parameter inputs based on checkbox state
+    document.querySelectorAll('#singleInputForm .operation-checkbox').forEach(checkbox => {
+        checkbox.addEventListener('change', function() {
+            const paramInput = document.getElementById(`${this.value}_value`);
+            if (paramInput) {
+                paramInput.disabled = !this.checked;
+            }
+        });
+        
+        // Initial state
+        const paramInput = document.getElementById(`${checkbox.value}_value`);
+        if (paramInput) {
+            paramInput.disabled = !checkbox.checked;
+        }
+    });
+
+    // Form submission for two input
+    document.getElementById('twoInputForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+        
+        // Get selected operations
+        const selectedOps = Array.from(document.querySelectorAll('#twoInputForm .operation-checkbox:checked'))
+            .map(checkbox => checkbox.value);
+        
+        if (selectedOps.length === 0) {
+            alert('Pilih minimal satu operasi');
+            return;
+        }
+        
+        // Set selected operations to hidden input
+        document.getElementById('selectedOperations2').value = selectedOps.join(',');
+        
+        // Submit form
+        this.submit();
+    });
+
+    // Download functionality
+    document.querySelectorAll('.download-btn').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            const url = this.dataset.url;
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = 'result.png';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        });
+    });
+
+    // Download all results
+    document.getElementById('downloadAllBtn').addEventListener('click', function() {
+        document.querySelectorAll('.download-btn').forEach((btn, index) => {
+            setTimeout(() => {
+                const url = btn.dataset.url;
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = `result_${index + 1}.png`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            }, index * 500);
+            });
+        });
+    });
+</script>
+{% endblock %} 

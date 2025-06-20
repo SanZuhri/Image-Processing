@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+
+{% block title %}Pengurangan Noise Periodik{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Pengurangan Noise Periodik</h2>
+    
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="card-title mb-0">Pengaturan Filter Notch</h5>
+        </div>
+        <div class="card-body">
+            <form action="/reduce-noise/" method="post" enctype="multipart/form-data">
+                <div class="mb-3">
+                    <label for="image" class="form-label">Pilih Gambar</label>
+                    <input type="file" class="form-control" id="image" name="file" accept="image/*" required>
+                </div>
+                <div class="mb-3">
+                    <label for="d0" class="form-label">Jarak dari Pusat (D0): <span id="d0Output">10</span></label>
+                    <input type="range" class="form-range" id="d0" name="d0" min="1" max="50" value="10">
+                </div>
+                <div class="mb-3">
+                    <label for="n" class="form-label">Orde Filter (n): <span id="nOutput">4</span></label>
+                    <input type="range" class="form-range" id="n" name="n" min="1" max="10" value="4">
+                </div>
+                <div class="mb-3">
+                    <label for="uk" class="form-label">Koordinat U dari Noise (uk): <span id="ukOutput">50</span></label>
+                    <input type="range" class="form-range" id="uk" name="uk" min="0" max="100" value="50">
+                </div>
+                <div class="mb-3">
+                    <label for="vk" class="form-label">Koordinat V dari Noise (vk): <span id="vkOutput">50</span></label>
+                    <input type="range" class="form-range" id="vk" name="vk" min="0" max="100" value="50">
+                </div>
+                <button type="submit" class="btn btn-primary">Proses</button>
+            </form>
+        </div>
+    </div>
+
+    {% if error %}
+    <div class="alert alert-danger" role="alert">
+        {{ error }}
+    </div>
+    {% endif %}
+
+    {% if original_image_path and modified_image_path %}
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Gambar Asli</h5>
+                </div>
+                <div class="card-body">
+                    <img src="{{ original_image_path }}" class="img-fluid" alt="Original Image">
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Magnitude Spectrum</h5>
+                </div>
+                <div class="card-body">
+                    <img src="{{ spectrum_path }}" class="img-fluid" alt="Spectrum">
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Hasil Pengurangan Noise</h5>
+                </div>
+                <div class="card-body">
+                    <img src="{{ modified_image_path }}" class="img-fluid" alt="Processed Image">
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<script>
+    // Update nilai slider
+    const sliders = ['d0', 'n', 'uk', 'vk'];
+    sliders.forEach(id => {
+        const slider = document.getElementById(id);
+        const output = document.getElementById(id + 'Output');
+        slider.addEventListener("input", function () {
+            output.textContent = slider.value;
+        });
+    });
+</script>
+{% endblock %} 

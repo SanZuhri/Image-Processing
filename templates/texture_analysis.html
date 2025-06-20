@@ -1,0 +1,240 @@
+{% extends "base.html" %}
+
+{% block title %}Analisis Tekstur{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Analisis Tekstur</h2>
+
+    <!-- Tab Navigation -->
+    <ul class="nav nav-tabs mb-4" id="textureTab" role="tablist">
+        <li class="nav-item">
+            <a class="nav-link active" id="statistical-tab" data-bs-toggle="tab" href="#statistical" role="tab">Statistikal</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="spectral-tab" data-bs-toggle="tab" href="#spectral" role="tab">Spektral</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="structural-tab" data-bs-toggle="tab" href="#structural" role="tab">Struktural</a>
+        </li>
+    </ul>
+
+    <!-- Tab Content -->
+    <div class="tab-content" id="textureTabContent">
+        <!-- Statistical Analysis Tab -->
+        <div class="tab-pane fade show active" id="statistical" role="tabpanel">
+            <div class="card">
+                <div class="card-body">
+                    <form action="/texture/statistical/" method="post" enctype="multipart/form-data">
+                        <div class="mb-3">
+                            <label for="statImage" class="form-label">Pilih Gambar</label>
+                            <input type="file" class="form-control" id="statImage" name="file" accept="image/*" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="stat_method" class="form-label">Metode Analisis</label>
+                            <select class="form-select" id="stat_method" name="method" required>
+                                <option value="first_order">First-Order Statistics</option>
+                                <option value="glcm">GLCM (Gray Level Co-occurrence Matrix)</option>
+                                <option value="glrlm">GLRLM (Gray Level Run Length Matrix)</option>
+                            </select>
+                        </div>
+                        <div id="glcmOptions" class="mb-3" style="display: none;">
+                            <label for="direction" class="form-label">Arah GLCM</label>
+                            <select class="form-select" id="direction" name="direction">
+                                <option value="0">0°</option>
+                                <option value="45">45°</option>
+                                <option value="90">90°</option>
+                                <option value="135">135°</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Analisis</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Spectral Analysis Tab -->
+        <div class="tab-pane fade" id="spectral" role="tabpanel">
+            <div class="card">
+                <div class="card-body">
+                    <form action="/texture/spectral/" method="post" enctype="multipart/form-data">
+                        <div class="mb-3">
+                            <label for="specImage" class="form-label">Pilih Gambar</label>
+                            <input type="file" class="form-control" id="specImage" name="file" accept="image/*" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="spec_method" class="form-label">Metode Analisis</label>
+                            <select class="form-select" id="spec_method" name="method" required>
+                                <option value="fourier">Fourier Transform</option>
+                                <option value="gabor">Gabor Filter</option>
+                            </select>
+                        </div>
+                        <div id="gaborOptions" class="mb-3" style="display: none;">
+                            <label for="orientation" class="form-label">Orientasi Gabor: <span id="orientationValue">0</span>°</label>
+                            <input type="range" class="form-range" id="orientation" name="orientation" min="0" max="180" step="45" value="0">
+                            <label for="frequency" class="form-label">Frekuensi: <span id="frequencyValue">0.1</span></label>
+                            <input type="range" class="form-range" id="frequency" name="frequency" min="0.1" max="1.0" step="0.1" value="0.1">
+                        </div>
+                        <button type="submit" class="btn btn-primary">Analisis</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Structural Analysis Tab -->
+        <div class="tab-pane fade" id="structural" role="tabpanel">
+            <div class="card">
+                <div class="card-body">
+                    <form action="/texture/structural/" method="post" enctype="multipart/form-data">
+                        <div class="mb-3">
+                            <label for="strucImage" class="form-label">Pilih Gambar</label>
+                            <input type="file" class="form-control" id="strucImage" name="file" accept="image/*" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="struc_method" class="form-label">Metode Analisis</label>
+                            <select class="form-select" id="struc_method" name="method" required>
+                                <option value="lbp">Local Binary Pattern (LBP)</option>
+                                <option value="texton">Texton</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Analisis</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% if error %}
+    <div class="alert alert-danger mt-4" role="alert">
+        {{ error }}
+    </div>
+    {% endif %}
+
+    <!-- Results Section -->
+    {% if mode == "statistical" %}
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <h4>Gambar Asli</h4>
+            <img src="{{ original_image_path }}" class="img-fluid" alt="Original Image">
+        </div>
+        <div class="col-md-6">
+            <h4>Hasil Analisis</h4>
+            {% if method == "first_order" %}
+            <ul class="list-group">
+                <li class="list-group-item">Mean: {{ analysis.mean }}</li>
+                <li class="list-group-item">Variance: {{ analysis.variance }}</li>
+                <li class="list-group-item">Skewness: {{ analysis.skewness }}</li>
+                <li class="list-group-item">Kurtosis: {{ analysis.kurtosis }}</li>
+                <li class="list-group-item">Energy: {{ analysis.energy }}</li>
+                <li class="list-group-item">Entropy: {{ analysis.entropy }}</li>
+            </ul>
+            {% elif method == "glcm" %}
+            <img src="{{ glcm_path }}" class="img-fluid mb-3" alt="GLCM Visualization">
+            <ul class="list-group">
+                <li class="list-group-item">Contrast: {{ analysis.contrast }}</li>
+                <li class="list-group-item">Correlation: {{ analysis.correlation }}</li>
+                <li class="list-group-item">Energy: {{ analysis.energy }}</li>
+                <li class="list-group-item">Homogeneity: {{ analysis.homogeneity }}</li>
+            </ul>
+            {% else %}
+            <img src="{{ glrlm_path }}" class="img-fluid mb-3" alt="GLRLM Visualization">
+            <ul class="list-group">
+                <li class="list-group-item">Short Run Emphasis: {{ analysis.sre }}</li>
+                <li class="list-group-item">Long Run Emphasis: {{ analysis.lre }}</li>
+                <li class="list-group-item">Gray Level Non-uniformity: {{ analysis.gln }}</li>
+                <li class="list-group-item">Run Length Non-uniformity: {{ analysis.rln }}</li>
+            </ul>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+
+    {% if mode == "spectral" %}
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <h4>Gambar Asli</h4>
+            <img src="{{ original_image_path }}" class="img-fluid" alt="Original Image">
+        </div>
+        <div class="col-md-6">
+            <h4>Hasil Analisis Spektral</h4>
+            <img src="{{ spectral_path }}" class="img-fluid" alt="Spectral Analysis">
+        </div>
+    </div>
+    {% if method == "gabor" %}
+    <div class="row mt-4">
+        <div class="col-md-12">
+            <h4>Filter Bank Gabor</h4>
+            <div class="d-flex flex-wrap">
+                {% for filter in gabor_filters %}
+                <div class="m-2">
+                    <img src="{{ filter.path }}" class="img-fluid" alt="Gabor Filter" style="max-width: 150px;">
+                    <p class="text-center">{{ filter.params }}</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    {% endif %}
+
+    {% if mode == "structural" %}
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <h4>Gambar Asli</h4>
+            <img src="{{ original_image_path }}" class="img-fluid" alt="Original Image">
+        </div>
+        <div class="col-md-6">
+            <h4>Hasil Analisis Struktural</h4>
+            <img src="{{ structural_path }}" class="img-fluid" alt="Structural Analysis">
+        </div>
+    </div>
+    {% if method == "lbp" %}
+    <div class="mt-4">
+        <h4>Histogram LBP</h4>
+        <img src="{{ lbp_histogram }}" class="img-fluid" alt="LBP Histogram">
+    </div>
+    {% endif %}
+    {% endif %}
+</div>
+
+<script>
+    // Toggle GLCM options based on selected method
+    const statMethod = document.getElementById('stat_method');
+    const glcmOptions = document.getElementById('glcmOptions');
+
+    statMethod.addEventListener('change', function() {
+        glcmOptions.style.display = this.value === 'glcm' ? 'block' : 'none';
+    });
+
+    // Toggle Gabor options based on selected method
+    const specMethod = document.getElementById('spec_method');
+    const gaborOptions = document.getElementById('gaborOptions');
+
+    specMethod.addEventListener('change', function() {
+        gaborOptions.style.display = this.value === 'gabor' ? 'block' : 'none';
+    });
+
+    // Update Gabor parameter values
+    const orientation = document.getElementById('orientation');
+    const orientationValue = document.getElementById('orientationValue');
+    const frequency = document.getElementById('frequency');
+    const frequencyValue = document.getElementById('frequencyValue');
+
+    orientation.addEventListener('input', function() {
+        orientationValue.textContent = this.value;
+    });
+
+    frequency.addEventListener('input', function() {
+        frequencyValue.textContent = this.value;
+    });
+
+    // Set active tab based on mode
+    {% if mode %}
+        const mode = "{{ mode }}";
+        const tab = document.querySelector(`#${mode}-tab`);
+        if (tab) {
+            tab.click();
+        }
+    {% endif %}
+</script>
+{% endblock %} 

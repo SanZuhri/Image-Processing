@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}Fourier Transform{% endblock %}
+{% block content %}
+<div class="container mt-5">
+    <h2 class="text-center">Transformasi Fourier</h2>
+    <form action="/fourier/" enctype="multipart/form-data" method="post" class="mt-4">
+        <div class="mb-3">
+            <label for="file">Pilih Gambar:</label>
+            <input name="file" type="file" accept="image/*" class="form-control" required />
+        </div>
+        <div class="mb-3">
+            <label for="transform_type">Pilih Jenis Transformasi:</label>
+            <select name="transform_type" class="form-select" required>
+                <option value="magnitude">Magnitude Spectrum</option>
+                <option value="phase">Phase Spectrum</option>
+                <option value="both">Keduanya</option>
+            </select>
+        </div>
+        <div class="text-center">
+            <input type="submit" value="Terapkan Transformasi" class="btn btn-primary" />
+        </div>
+    </form>
+</div>
+{% endblock %} 

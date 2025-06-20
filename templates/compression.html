@@ -1,0 +1,136 @@
+{% extends "base.html" %}
+
+{% block title %}Kompresi Citra{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Kompresi Citra</h2>
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="card-title mb-0">Kompresi JPEG dan PNG</h5>
+        </div>
+        <div class="card-body">
+            <form action="/compression/" method="post" enctype="multipart/form-data">
+                <div class="mb-3">
+                    <label for="image" class="form-label">Pilih Gambar</label>
+                    <input type="file" class="form-control" id="image" name="file" accept="image/*" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Metode Kompresi</label>
+                    <select class="form-select" id="compressionMethod" name="method" required>
+                        <option value="jpeg">JPEG (Lossy)</option>
+                        <option value="png">PNG (Lossless)</option>
+                    </select>
+                </div>
+                <div id="jpegOptions" class="mb-3">
+                    <label for="quality" class="form-label">Kualitas JPEG: <span id="qualityValue">95</span></label>
+                    <select class="form-select" id="quality" name="quality">
+                        <option value="95">95 - Kualitas Tinggi</option>
+                        <option value="75">75 - Kualitas Baik</option>
+                        <option value="50">50 - Kualitas Sedang</option>
+                        <option value="25">25 - Kualitas Rendah</option>
+                        <option value="10">10 - Kualitas Sangat Rendah</option>
+                    </select>
+                </div>
+                <div id="pngOptions" class="mb-3" style="display: none;">
+                    <label for="level" class="form-label">Level Kompresi PNG: <span id="levelValue">9</span></label>
+                    <select class="form-select" id="level" name="level">
+                        <option value="0">0 - Tanpa Kompresi</option>
+                        <option value="3">3 - Kompresi Rendah</option>
+                        <option value="6">6 - Kompresi Sedang</option>
+                        <option value="9" selected>9 - Kompresi Maksimal</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary">Kompres</button>
+            </form>
+        </div>
+    </div>
+
+    {% if error %}
+    <div class="alert alert-danger" role="alert">
+        {{ error }}
+    </div>
+    {% endif %}
+
+    {% if analysis %}
+    <div class="card">
+        <div class="card-header">
+            <h5 class="card-title mb-0">Hasil Kompresi</h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <h4>Gambar Asli</h4>
+                    <img src="{{ original_image_path }}" class="img-fluid" alt="Original Image">
+                    <p class="mt-2">Ukuran: {{ analysis.original_size }} KB</p>
+                </div>
+                <div class="col-md-6">
+                    <h4>Gambar Terkompresi</h4>
+                    <img src="{{ compressed_image_path }}" class="img-fluid" alt="Compressed Image">
+                    <p class="mt-2">Ukuran: {{ analysis.compressed_size }} KB</p>
+                </div>
+            </div>
+            <div class="mt-4">
+                <h4>Analisis Kompresi</h4>
+                <ul class="list-group">
+                    <li class="list-group-item">
+                        <strong>Metode:</strong> {{ analysis.method }}
+                        {% if analysis.method == "JPEG" %}
+                        (Kualitas: {{ analysis.quality }})
+                        {% else %}
+                        (Level: {{ analysis.level }})
+                        {% endif %}
+                    </li>
+                    <li class="list-group-item">
+                        <strong>Rasio Kompresi:</strong> {{ analysis.compression_ratio }}:1
+                    </li>
+                    {% if analysis.method == "JPEG" %}
+                    <li class="list-group-item">
+                        <strong>PSNR:</strong> {{ analysis.psnr }} dB
+                    </li>
+                    <li class="list-group-item">
+                        <strong>MSE:</strong> {{ analysis.mse }}
+                    </li>
+                    {% else %}
+                    <li class="list-group-item">
+                        <strong>Identik dengan Original:</strong> {{ "Ya" if analysis.is_identical else "Tidak" }}
+                    </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<script>
+    // Toggle opsi kompresi berdasarkan metode yang dipilih
+    const compressionMethod = document.getElementById('compressionMethod');
+    const jpegOptions = document.getElementById('jpegOptions');
+    const pngOptions = document.getElementById('pngOptions');
+
+    compressionMethod.addEventListener('change', function() {
+        if (this.value === 'jpeg') {
+            jpegOptions.style.display = 'block';
+            pngOptions.style.display = 'none';
+        } else {
+            jpegOptions.style.display = 'none';
+            pngOptions.style.display = 'block';
+        }
+    });
+
+    // Update nilai yang dipilih
+    const quality = document.getElementById('quality');
+    const qualityValue = document.getElementById('qualityValue');
+    const level = document.getElementById('level');
+    const levelValue = document.getElementById('levelValue');
+
+    quality.addEventListener('change', function() {
+        qualityValue.textContent = this.value;
+    });
+
+    level.addEventListener('change', function() {
+        levelValue.textContent = this.value;
+    });
+</script>
+{% endblock %} 

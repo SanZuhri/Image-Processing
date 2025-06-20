@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+
+{% block title %}Operasi Dasar{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Operasi Dasar</h2>
+    
+    <!-- Upload Gambar Dasar -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="card-title mb-0">Upload Gambar Dasar</h5>
+        </div>
+        <div class="card-body">
+            <form action="/upload/" method="post" enctype="multipart/form-data">
+                <div class="mb-3">
+                    <label for="baseImage" class="form-label">Pilih Gambar</label>
+                    <input type="file" class="form-control" id="baseImage" name="file" accept="image/*" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Upload</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Operasi Aritmatika -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="card-title mb-0">Operasi Aritmatika</h5>
+        </div>
+        <div class="card-body">
+            <form action="/operation/" method="post" enctype="multipart/form-data">
+                <div class="mb-3">
+                    <label for="arithmeticImage" class="form-label">Pilih Gambar</label>
+                    <input type="file" class="form-control" id="arithmeticImage" name="file" accept="image/*" required>
+                </div>
+                <div class="mb-3">
+                    <label for="arithmeticOperation" class="form-label">Pilih Operasi</label>
+                    <select class="form-select" id="arithmeticOperation" name="operation" required>
+                        <option value="add">Penjumlahan (+)</option>
+                        <option value="subtract">Pengurangan (-)</option>
+                        <option value="multiply">Perkalian (×)</option>
+                        <option value="divide">Pembagian (÷)</option>
+                        <option value="max">Maksimum</option>
+                        <option value="min">Minimum</option>
+                        <option value="inverse">Inverse</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="value" class="form-label">Nilai: <span id="valueOutput">128</span></label>
+                    <input type="range" class="form-range" id="value" name="value" min="0" max="255" value="128">
+                </div>
+                <button type="submit" class="btn btn-primary">Proses</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Operasi Logika -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="card-title mb-0">Operasi Logika</h5>
+        </div>
+        <div class="card-body">
+            <form action="/logic_operation/" method="post" enctype="multipart/form-data">
+                <div class="mb-3">
+                    <label for="logicImage1" class="form-label">Gambar Pertama</label>
+                    <input type="file" class="form-control" id="logicImage1" name="file1" accept="image/*" required>
+                </div>
+                <div class="mb-3">
+                    <label for="logicOperation" class="form-label">Pilih Operasi</label>
+                    <select class="form-select" id="logicOperation" name="operation" required>
+                        <option value="not">NOT</option>
+                        <option value="and">AND</option>
+                        <option value="or">OR</option>
+                        <option value="xor">XOR</option>
+                    </select>
+                </div>
+                <div class="mb-3" id="secondImageGroup">
+                    <label for="logicImage2" class="form-label">Gambar Kedua</label>
+                    <input type="file" class="form-control" id="logicImage2" name="file2" accept="image/*">
+                </div>
+                <button type="submit" class="btn btn-primary">Proses</button>
+            </form>
+        </div>
+    </div>
+
+    {% if error %}
+    <div class="alert alert-danger" role="alert">
+        {{ error }}
+    </div>
+    {% endif %}
+</div>
+
+<script>
+    // Update nilai slider
+    const slider = document.getElementById("value");
+    const output = document.getElementById("valueOutput");
+    slider.addEventListener("input", function () {
+        output.textContent = slider.value;
+    });
+
+    // Toggle input gambar kedua berdasarkan operasi logika
+    const logicOperation = document.getElementById("logicOperation");
+    const secondImageGroup = document.getElementById("secondImageGroup");
+    const secondImageInput = document.getElementById("logicImage2");
+
+    logicOperation.addEventListener("change", function() {
+        if (this.value === "not") {
+            secondImageGroup.style.display = "none";
+            secondImageInput.removeAttribute("required");
+        } else {
+            secondImageGroup.style.display = "block";
+            secondImageInput.setAttribute("required", "");
+        }
+    });
+
+    // Trigger change event saat halaman dimuat
+    logicOperation.dispatchEvent(new Event("change"));
+</script>
+{% endblock %}
