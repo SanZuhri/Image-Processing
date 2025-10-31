@@ -27,29 +27,31 @@ A web-based application for digital image processing with various operations and
 ## Quick Start
 
 1. Clone repository:
-    ```bash
+```
 git clone [your-repository-url]
 cd [project-directory]
 ```
 
 2. Create and activate virtual environment:
-    ```bash
+```
 # Windows
 python -m venv venv
 .\venv\Scripts\activate
+```
 
 # macOS / Linux
+```
 python3 -m venv venv
 source venv/bin/activate
 ```
 
 3. Install dependencies:
-    ```bash
+```
 pip install -r requirements.txt
 ```
 
 4. Run the application:
-    ```bash
+```
 uvicorn main:app --reload
 ```
 
